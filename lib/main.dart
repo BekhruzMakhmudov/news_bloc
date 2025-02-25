@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc_news/config/themes/app_themes.dart';
 import 'package:flutter_bloc_news/features/daily_news/presentation/bloc/article/remote/remote_article_bloc.dart';
+import 'package:flutter_bloc_news/features/daily_news/presentation/bloc/category/category_bloc.dart';
 import 'package:flutter_bloc_news/features/daily_news/presentation/pages/home/daily_news.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/daily_news/presentation/bloc/article/local/local_article_bloc.dart';
@@ -18,8 +19,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<CategoryBloc>(create: (context)=>CategoryBloc()),
         BlocProvider<RemoteArticleBloc>(
-          create: (context) => sl()..add(const GetArticles()),
+          create: (context) => sl()..add(const GetArticles("general")),
         ),
         BlocProvider<LocalArticleBloc>(
           create: (context) => sl<LocalArticleBloc>()..add(const GetSavedArticles()),

@@ -12,10 +12,13 @@ import '../data_sources/remote/news_api_service.dart';
 class ArticleRepositoryImpl implements ArticleRepository {
   final NewsApiService _newsApiService;
   final AppDatabase _appDatabase;
+
   ArticleRepositoryImpl(this._newsApiService, this._appDatabase);
 
   @override
-  Future<DataState<List<ArticleEntity>>> getNewsArticles() async {
+  Future<DataState<List<ArticleEntity>>> getNewsArticles({
+    required String category,
+  }) async {
     try {
       final httpResponse = await _newsApiService.getNewsArticles(
         apiKey: apiKey,
@@ -38,7 +41,7 @@ class ArticleRepositoryImpl implements ArticleRepository {
   }
 
   @override
-  Future<List<ArticleModel>> getSavedArticles()async {
+  Future<List<ArticleModel>> getSavedArticles() async {
     return _appDatabase.articleDAO.getArticles();
   }
 
@@ -49,9 +52,11 @@ class ArticleRepositoryImpl implements ArticleRepository {
 
   @override
   Future<void> saveArticle(ArticleEntity article) async {
-    final existingArticle = await _appDatabase.articleDAO.getArticleByUrl(article.url!);
+    final existingArticle =
+        await _appDatabase.articleDAO.getArticleByUrl(article.url!);
     if (existingArticle == null) {
-      await _appDatabase.articleDAO.insertArticle(ArticleModel.fromEntity(article));
+      await _appDatabase.articleDAO
+          .insertArticle(ArticleModel.fromEntity(article));
     }
   }
 }

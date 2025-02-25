@@ -22,8 +22,7 @@ class RemoteArticleBloc extends Bloc<RemoteArticleEvent, RemoteArticleState> {
       Emitter<RemoteArticleState> emit,
       ) async {
     emit(const RemoteArticlesLoading());
-
-    final dataState = await _getArticleUseCase();
+    final dataState = await _getArticleUseCase(params: event.category);
     print("Fetched articles: ${dataState.data}");
     if (dataState is DataSuccess) {
       final articles = dataState.data ?? [];
