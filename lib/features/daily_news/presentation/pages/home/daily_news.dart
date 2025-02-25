@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc_news/features/daily_news/presentation/bloc/article/remote/remote_article_bloc.dart';
-import 'package:flutter_bloc_news/features/daily_news/presentation/widgets/article_tile_widget.dart';
+
+import '../../../../../core/util/onArticleTap.dart';
+import '../../bloc/article/remote/remote_article_bloc.dart';
+import '../../widgets/article_tile_widget.dart';
+import '../saved_article/saved_article.dart';
 
 class DailyNews extends StatelessWidget {
   const DailyNews({super.key});
@@ -18,34 +21,43 @@ class DailyNews extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.watch_later_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SavedArticle()),
+              );
+            },
+            icon: const Icon(Icons.bookmark),
           ),
         ],
       ),
       body: BlocBuilder<RemoteArticleBloc, RemoteArticleState>(
-          builder: (_, state) {
-        if (state is RemoteArticlesLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (state is RemoteArticlesDone) {
-          return ListView.separated(
-            itemCount: state.articles?.length ?? 0,
-            itemBuilder: (context, index) => ArticleTileWidget(
-              article: state.articles![index],
-            ),
-            separatorBuilder: (BuildContext context, int index) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Divider(height: 0),
-            ),
-          );
-        } else {
-          return const Center(
-            child: Icon(Icons.refresh),
-          );
-        }
-      }),
+        builder: (_, state) {
+          if (state is RemoteArticlesLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is RemoteArticlesDone) {
+            return ListView.separated(
+              itemCount: state.articles?.length ?? 0,
+              itemBuilder: (context, index) => GestureDetector(
+                onTap: () => onArticleTap(context, state.articles![index]),
+                child: ArticleTileWidget(
+                  article: state.articles![index],
+                ),
+              ),
+              separatorBuilder: (BuildContext context, int index) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Divider(height: 0),
+              ),
+            );
+          } else {
+            return const Center(
+              child: Icon(Icons.refresh),
+            );
+          }
+        },
+      ),
     );
   }
 }
